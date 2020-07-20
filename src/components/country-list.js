@@ -14,11 +14,21 @@ const CountryListStyled = styled.div`
 
 const CountryList = () => {
     const dispatch = useDispatch();
-    const countryList = useSelector((state) => state.countryList);
+    const countryListByName = useSelector((state) => state.countryListByName);
+    const countryList = useSelector((state) => {
+        if(state.filterByRegion !== '' && countryListByName.length === 0){
+            return state.countryFilteredByRegion;
+        }
+        if(countryListByName.length > 0) {
+            return countryListByName
+        }
+
+        return state.countryList;
+    });
     useEffect(()=> {
         fetch('https://restcountries.eu/rest/v2/all')
         .then((response)=> response.json())
-        .then((list)=> dispatch({
+        .then((list)=> dispatch ({
             type: 'SET_COUNTRY_LIST',
             payload: list,
         }))
